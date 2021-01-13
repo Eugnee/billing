@@ -1,0 +1,12 @@
+.venv
+.env
+.env.dev
+.cache
+.coverage
+.mypy_cache
+.scannerwork
+**/__pycache__
+.pylintrc
+.vscode
+.pytest_cache
+.python-version
