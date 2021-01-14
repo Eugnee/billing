@@ -5,7 +5,7 @@ from . import metadata
 user_table = sa.Table(
     "user",
     metadata,
-    sa.Column("id", sa.Integer, primary_key=True),
+    sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
     sa.Column("email", sa.String(40), unique=True, index=True, nullable=False),
     sa.Column("name", sa.String(200), nullable=False),
     sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.sql.func.now()),
