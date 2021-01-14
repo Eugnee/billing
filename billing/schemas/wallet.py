@@ -1,5 +1,4 @@
 from pydantic import BaseModel, validator
-from typing import List
 
 
 class WalletFields(BaseModel):
@@ -25,7 +24,3 @@ class WalletReplenisment(BaseModel):
         if v < 0:
             raise ValueError("Incorrect amount")
         return v
-
-
-class WalletsList(BaseModel):
-    wallets: List[Wallet]

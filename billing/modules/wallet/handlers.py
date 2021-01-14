@@ -100,5 +100,4 @@ async def transfer_money_from_one_to_another(
             to_wallet = await update_wallet(
                 conn, wallet=to_wallet, new_wallet_fields=new_to_wallet_fileds
             )
-            return {"wallets": [from_wallet, to_wallet]}
-            # return [Wallet(**from_wallet), Wallet(**to_wallet)]
+            return [from_wallet, to_wallet]

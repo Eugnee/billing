@@ -1,3 +1,4 @@
+from typing import List
 from billing.modules.wallet.exceptions import (
     IdenticalWalletsException,
     InsufficientFundsException,
@@ -5,7 +6,7 @@ from billing.modules.wallet.exceptions import (
     WalletNotFoundException,
 )
 from billing.modules.wallet.handlers import replenish_wallet, transfer_money_from_one_to_another
-from billing.schemas import Wallet, WalletReplenisment, WalletsList
+from billing.schemas import Wallet, WalletReplenisment
 from fastapi import APIRouter, HTTPException
 
 wallet_router = APIRouter()
@@ -23,7 +24,7 @@ async def wallet_replenishment(wallet_id: int, wallet_replenishment: WalletReple
         raise HTTPException(status_code=429, detail="Cant replenish wallet now, try it later")
 
 
-@wallet_router.post("/{from_wallet_id}/transfer_to/{to_wallet_id}", response_model=WalletsList)
+@wallet_router.post("/{from_wallet_id}/transfer_to/{to_wallet_id}", response_model=List[Wallet])
 async def transfer_money(
     from_wallet_id: int, to_wallet_id: int, wallet_replenishment: WalletReplenisment
 ):
