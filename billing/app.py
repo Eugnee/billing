@@ -18,4 +18,4 @@ async def startup():
 
 @app.on_event("shutdown")
 async def shutdown():
-    await app.db.disconnect()
+    app.db.close()

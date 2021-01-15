@@ -1,3 +1,4 @@
+from billing.modules.user.exceptions import UserAlreadyExistsException
 from billing.modules.wallet.handlers import create_wallet
 from billing.schemas import UserFields, WalletFields
 from billing.app import app
@@ -12,6 +13,9 @@ async def get_user_by_email(email: str):
 
 async def create_user_with_wallet(user_fields: UserFields):
     async with app.db.acquire() as conn:
+        user = await get_user_by_email(email=user_fields.email)
+        if user:
+            raise UserAlreadyExistsException
         async with conn.begin():
             user = await create(user_table, conn, user_fields.dict())
         wallet = await create_wallet(WalletFields(user_id=user["id"]))

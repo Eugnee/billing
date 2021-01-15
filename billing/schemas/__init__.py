@@ -1,5 +1,5 @@
 from .user import UserFields, User, UserWithWallet
-from .wallet import WalletFields, Wallet, WalletReplenisment, WalletsList
+from .wallet import WalletFields, Wallet, WalletReplenisment
 from .wallet_history import WalletHistoryFields
 
 __all__ = [
@@ -9,6 +9,5 @@ __all__ = [
     "WalletFields",
     "Wallet",
     "WalletReplenisment",
-    "WalletsList",
     "WalletHistoryFields",
 ]
