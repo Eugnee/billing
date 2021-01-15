@@ -11,13 +11,13 @@ from billing.schemas.wallet import WalletReplenisment
 from billing.schemas import WalletFields, Wallet, WalletHistoryFields
 from billing.app import app
 from billing.models import wallet_table, wallet_history_table
-from billing.modules.db_helpers.crud import (
-    create,
+from billing.modules.db_helpers.get import (
     get_by_id,
     get_by_id_with_lock,
-    get_by_col_name,
-    update_by_id,
+    get_by_col_value,
 )
+from billing.modules.db_helpers.create import create
+from billing.modules.db_helpers.update import update_by_id
 
 
 async def get_wallet_by_id(wallet_id: int):
@@ -27,7 +27,7 @@ async def get_wallet_by_id(wallet_id: int):
 
 async def get_wallet_by_user_id(user_id: int):
     async with app.db.acquire() as conn:
-        return await get_by_col_name(wallet_table, conn, "user_id", user_id)
+        return await get_by_col_value(wallet_table, conn, "user_id", user_id)
 
 
 async def create_wallet(wallet_fields: WalletFields):

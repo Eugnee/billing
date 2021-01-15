@@ -11,7 +11,7 @@ async def test_create_user__ok(test_client):
         f"{settings.API_PREFIX}/users",
         json=data,
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json() == {
         "id": 1,
         "name": "Ivan",

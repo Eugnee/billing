@@ -1,4 +1,4 @@
-from tests.helpers import create_new_user_with_wallet
+from tests.helpers import create_new_user_with_wallet, get_last_wallet_history_by_wallet_id
 from billing.config import settings
 import pytest
 
@@ -20,6 +20,9 @@ async def test_wallet_replenishment__ok(test_client):
         "user_id": user_id,
         "balance": 450,
     }
+    history = await get_last_wallet_history_by_wallet_id(wallet_id)
+    assert history["old_balance"] == 0
+    assert history["new_balance"] == 450
 
 
 async def test_wallet_replenishment__no_wallet(test_client):

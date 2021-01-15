@@ -6,28 +6,10 @@ services:
     ports:
       - 5427:5432
     environment:
-        POSTGRES_PASSWORD: postgres
-
-  bash:
-    command: "bash"
-    ports:
-      - 8081:8081
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: postgres
-      DB_USER: postgres
-      DB_PASS: postgres
-    volumes:
-      - .:/app
-    depends_on:
-      - db
+      POSTGRES_PASSWORD: postgres
 
   dev_server:
-    command: ["poetry", "run", "python", "billing/manage.py", "run-server"]
+    command: bash -c "sh run_migrations.sh && poetry run python billing/manage.py run-server"
     ports:
       - 8081:8081
     build:

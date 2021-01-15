@@ -1,0 +1,9 @@
+.dockerignore
+.idea
+.venv
+.vscode
+.env
+.coverage
+__pycache__/
+**/__pycache__
+*.pyc

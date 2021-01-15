@@ -7,7 +7,7 @@ from fastapi import HTTPException
 user_router = APIRouter()
 
 
-@user_router.post("", response_model=UserWithWallet)
+@user_router.post("", response_model=UserWithWallet, status_code=201)
 async def create_user(user_fields: UserFields):
     try:
         return await create_user_with_wallet(user_fields=user_fields)

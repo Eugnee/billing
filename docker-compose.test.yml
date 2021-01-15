@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  db:
+  test_db:
     image: postgres
     ports:
       - 5426:5432
@@ -10,14 +10,14 @@ services:
 
 
   pytest:
-    command: ["poetry", "run", "pytest"]
+    command: bash -c "sh run_migrations.sh && poetry run pytest"
     ports:
       - 8081:8081
     build:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      DB_HOST: db
+      DB_HOST: test_db
       DB_PORT: 5432
       DB_NAME: postgres
       DB_USER: postgres
@@ -25,4 +25,4 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db
+      - test_db
