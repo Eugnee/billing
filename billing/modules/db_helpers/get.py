@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 from aiopg.sa import SAConnection
 from sqlalchemy.sql import Select
 from .execute import get_one, get_all
@@ -17,7 +17,7 @@ async def get_by_col_value(
 
 async def get_all_by_col_value(
     table, conn: SAConnection, col_name: str, col_value: Any
-) -> Optional[dict]:
+) -> List[Dict[Any, Any]]:
     query = get_select_by_col_name_query(table, col_name=col_name, col_value=col_value)
     return await get_all(conn, query)
 

@@ -39,13 +39,14 @@ async def create_wallet(wallet_fields: WalletFields):
 async def update_wallet(conn: SAConnection, wallet: Wallet, new_wallet_fields: WalletFields):
     async with conn.begin():
         updated_wallet = await update_by_id(wallet_table, conn, wallet.id, new_wallet_fields.dict())
-        wallet_history_data = WalletHistoryFields(
-            wallet_id=wallet.id,
-            old_balance=wallet.balance,
-            new_balance=updated_wallet["balance"],
-        )
-        await create(wallet_history_table, conn, wallet_history_data.dict())
-        return updated_wallet
+        if updated_wallet:
+            wallet_history_data = WalletHistoryFields(
+                wallet_id=wallet.id,
+                old_balance=wallet.balance,
+                new_balance=updated_wallet and updated_wallet["balance"],
+            )
+            await create(wallet_history_table, conn, wallet_history_data.dict())
+            return updated_wallet
 
 
 async def get_wallet_with_lock(conn: SAConnection, wallet_id: int) -> Wallet:
