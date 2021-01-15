@@ -1,8 +1,8 @@
-from asynctest import CoroutineMock
-import time
+import asyncio
 
 
-class SlowCoroMock(CoroutineMock):
-    def __call__(self, *args, **kwargs):
-        time.sleep(1)
-        return super().__call__(*args, **kwargs)
+def get_slow_coro_mock():
+    async def sleep(*a, **kw):
+        await asyncio.sleep(1)
+
+    return sleep

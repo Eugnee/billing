@@ -1,5 +1,5 @@
 import asyncio
-from tests.mocks import SlowCoroMock
+from tests.mocks import get_slow_coro_mock
 
 from asynctest import mock
 from tests.helpers import (
@@ -96,7 +96,7 @@ async def test_wallet_transfer__insufficient_funds(test_client):
     assert response.json() == {"detail": "Insufficient funds on wallet 1"}
 
 
-@mock.patch("billing.modules.wallet.handlers.update_wallet", new_callable=SlowCoroMock)
+@mock.patch("billing.modules.wallet.handlers.update_wallet", new_callable=get_slow_coro_mock)
 async def test_wallet_transfer__race_condition(update_wallet_mock, test_client):
     """trying to get locked rows"""
 

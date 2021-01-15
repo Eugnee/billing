@@ -10,6 +10,7 @@ services:
 
 
   pytest:
+    image: billing
     command: bash -c "sh run_migrations.sh && poetry run pytest"
     ports:
       - 8081:8081
