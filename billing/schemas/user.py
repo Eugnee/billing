@@ -1,12 +1,16 @@
 from pydantic import BaseModel, EmailStr
 
 
-class UserFields(BaseModel):
+class UserBase(BaseModel):
     email: EmailStr
     name: str
 
 
-class User(UserFields):
+class UserCreate(UserBase):
+    pass
+
+
+class User(UserBase):
     id: int
 
 

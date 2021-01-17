@@ -32,7 +32,7 @@ async def test_create_user_wrong_data(test_client):
 
 async def test_create_user_already_exists(test_client):
     user = await create_new_user_with_wallet()
-    data = {"name": "Fake", "email": user["email"]}
+    data = {"name": "Fake", "email": user.email}
 
     response = await test_client.post(
         f"{settings.API_PREFIX}/users",

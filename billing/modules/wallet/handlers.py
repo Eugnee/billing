@@ -1,72 +1,20 @@
+from billing.modules.wallet.crud import get_wallet_with_lock, update_wallet
 from typing import List
-from aiopg.sa.connection import SAConnection
-from psycopg2.errors import LockNotAvailable
 from billing.modules.wallet.exceptions import (
     IdenticalWalletsException,
     InsufficientFundsException,
-    OperationUnavailableException,
-    WalletNotFoundException,
 )
 from billing.schemas.wallet import WalletReplenisment
-from billing.schemas import WalletFields, Wallet, WalletHistoryFields
+from billing.schemas import WalletUpdate
 from billing.app import app
-from billing.models import wallet_table, wallet_history_table
-from billing.modules.db_helpers.get import (
-    get_by_id,
-    get_by_id_with_lock,
-    get_by_col_value,
-)
-from billing.modules.db_helpers.create import create
-from billing.modules.db_helpers.update import update_by_id
-
-
-async def get_wallet_by_id(wallet_id: int):
-    async with app.db.acquire() as conn:
-        return await get_by_id(wallet_table, conn, wallet_id)
-
-
-async def get_wallet_by_user_id(user_id: int):
-    async with app.db.acquire() as conn:
-        return await get_by_col_value(wallet_table, conn, "user_id", user_id)
-
-
-async def create_wallet(wallet_fields: WalletFields):
-    async with app.db.acquire() as conn:
-        async with conn.begin():
-            return await create(wallet_table, conn, wallet_fields.dict())
-
-
-async def update_wallet(conn: SAConnection, wallet: Wallet, new_wallet_fields: WalletFields):
-    async with conn.begin():
-        updated_wallet = await update_by_id(wallet_table, conn, wallet.id, new_wallet_fields.dict())
-        if updated_wallet:
-            wallet_history_data = WalletHistoryFields(
-                wallet_id=wallet.id,
-                old_balance=wallet.balance,
-                new_balance=updated_wallet and updated_wallet["balance"],
-            )
-            await create(wallet_history_table, conn, wallet_history_data.dict())
-            return updated_wallet
-
-
-async def get_wallet_with_lock(conn: SAConnection, wallet_id: int) -> Wallet:
-    try:
-        wallet = await get_by_id_with_lock(wallet_table, conn, wallet_id)
-    except LockNotAvailable:
-        raise OperationUnavailableException
-    if not wallet:
-        raise WalletNotFoundException(wallet_id=wallet_id)
-    return Wallet(**wallet)
 
 
 async def replenish_wallet(wallet_id: int, wallet_replenishment: WalletReplenisment):
     async with app.db.acquire() as conn:
         async with conn.begin():
             wallet = await get_wallet_with_lock(conn, wallet_id=wallet_id)
-            new_wallet_fileds = WalletFields(
-                user_id=wallet.user_id, balance=wallet.balance + wallet_replenishment.amount
-            )
-            return await update_wallet(conn, wallet=wallet, new_wallet_fields=new_wallet_fileds)
+            data_for_update = WalletUpdate(balance=wallet.balance + wallet_replenishment.cents)
+            return await update_wallet(conn, wallet=wallet, data_for_update=data_for_update)
 
 
 async def transfer_money_from_one_to_another(
@@ -81,24 +29,22 @@ async def transfer_money_from_one_to_another(
             to_wallet = await get_wallet_with_lock(conn, to_wallet_id)
 
             try:
-                new_from_wallet_fileds = WalletFields(
-                    user_id=from_wallet.user_id,
-                    balance=from_wallet.balance - wallet_replenishment.amount,
+                new_from_wallet_fileds = WalletUpdate(
+                    balance=from_wallet.balance - wallet_replenishment.cents,
                 )
             except ValueError:
                 raise InsufficientFundsException(wallet_id=from_wallet.id)
             from_wallet = await update_wallet(
-                conn, wallet=from_wallet, new_wallet_fields=new_from_wallet_fileds
+                conn, wallet=from_wallet, data_for_update=new_from_wallet_fileds
             )
 
             try:
-                new_to_wallet_fileds = WalletFields(
-                    user_id=to_wallet.user_id,
-                    balance=to_wallet.balance + wallet_replenishment.amount,
+                new_to_wallet_fileds = WalletUpdate(
+                    balance=to_wallet.balance + wallet_replenishment.cents,
                 )
             except ValueError:
                 raise InsufficientFundsException(wallet_id=to_wallet.id)
             to_wallet = await update_wallet(
-                conn, wallet=to_wallet, new_wallet_fields=new_to_wallet_fileds
+                conn, wallet=to_wallet, data_for_update=new_to_wallet_fileds
             )
             return [from_wallet, to_wallet]

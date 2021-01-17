@@ -3,6 +3,8 @@ version: "3"
 services:
   test_db:
     image: postgres
+    networks:
+      - billing
     ports:
       - 5426:5432
     environment:
@@ -11,6 +13,8 @@ services:
 
   pytest:
     image: billing
+    networks:
+      - billing
     command: bash -c "sh run_migrations.sh && poetry run pytest"
     ports:
       - 8081:8081
@@ -27,3 +31,6 @@ services:
       - .:/app
     depends_on:
       - test_db
+
+networks:
+  billing:

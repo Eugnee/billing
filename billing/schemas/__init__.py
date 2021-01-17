@@ -1,13 +1,14 @@
-from .user import UserFields, User, UserWithWallet
-from .wallet import WalletFields, Wallet, WalletReplenisment
-from .wallet_history import WalletHistoryFields
+from .user import UserCreate, User, UserWithWallet
+from .wallet import WalletCreate, WalletUpdate, Wallet, WalletReplenisment
+from .wallet_history import WalletHistoryCreate
 
 __all__ = [
-    "UserFields",
+    "UserCreate",
     "User",
     "UserWithWallet",
-    "WalletFields",
+    "WalletCreate",
+    "WalletUpdate",
     "Wallet",
     "WalletReplenisment",
-    "WalletHistoryFields",
+    "WalletHistoryCreate",
 ]

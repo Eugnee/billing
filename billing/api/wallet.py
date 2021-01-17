@@ -39,6 +39,6 @@ async def transfer_money(
     except OperationUnavailableException:
         raise HTTPException(status_code=429, detail="Cant transfer money now, try it later")
     except InsufficientFundsException as e:
-        raise HTTPException(status_code=400, detail=f"Insufficient funds on wallet {e.wallet_id}")
+        raise HTTPException(status_code=402, detail=f"Insufficient funds on wallet {e.wallet_id}")
     except IdenticalWalletsException:
         raise HTTPException(status_code=400, detail="Wrong request")

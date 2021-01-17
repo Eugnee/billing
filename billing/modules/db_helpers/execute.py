@@ -2,7 +2,7 @@ from typing import Optional, List, Dict, Any
 from aiopg.sa import SAConnection
 
 
-async def get_one(conn: SAConnection, query) -> Optional[dict]:
+async def get_one(conn: SAConnection, query) -> Optional[Dict[Any, Any]]:
     result = await conn.execute(query)
     row = await result.first()
     return dict(row) if row else row

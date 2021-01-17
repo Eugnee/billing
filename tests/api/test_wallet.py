@@ -1,4 +1,5 @@
-from tests.helpers import create_new_user_with_wallet, get_last_wallet_history_by_wallet_id
+from tests.helpers import create_new_user_with_wallet
+from billing.modules.wallet_history.handlers import get_last_wallet_history_by_wallet_id
 from billing.config import settings
 import pytest
 
@@ -7,9 +8,9 @@ pytestmark = pytest.mark.asyncio
 
 async def test_wallet_replenishment__ok(test_client):
     new_user = await create_new_user_with_wallet()
-    wallet_id = new_user["wallet_id"]
-    user_id = new_user["id"]
-    data = {"amount": 450}
+    wallet_id = new_user.wallet_id
+    user_id = new_user.id
+    data = {"cents": 450}
     response = await test_client.post(
         f"{settings.API_PREFIX}/wallets/{wallet_id}/replenish",
         json=data,
@@ -27,7 +28,7 @@ async def test_wallet_replenishment__ok(test_client):
 
 async def test_wallet_replenishment__no_wallet(test_client):
     wallet_id = 345
-    data = {"amount": 450}
+    data = {"cents": 450}
     response = await test_client.post(
         f"{settings.API_PREFIX}/wallets/{wallet_id}/replenish",
         json=data,
@@ -36,16 +37,16 @@ async def test_wallet_replenishment__no_wallet(test_client):
 
 
 @pytest.mark.parametrize(
-    "incorrect_amount",
+    "incorrect_cents",
     (
         -100,
         None,
     ),
 )
-async def test_wallet_replenishment__wrong_amount(incorrect_amount, test_client):
+async def test_wallet_replenishment__wrong_cents(incorrect_cents, test_client):
     new_user = await create_new_user_with_wallet()
-    wallet_id = new_user["wallet_id"]
-    data = {"amount": incorrect_amount}
+    wallet_id = new_user.wallet_id
+    data = {"cents": incorrect_cents}
     response = await test_client.post(
         f"{settings.API_PREFIX}/wallets/{wallet_id}/replenish",
         json=data,

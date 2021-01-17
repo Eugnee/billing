@@ -1,6 +1,5 @@
 .venv
 .env
-.env.dev
 .cache
 .coverage
 .mypy_cache

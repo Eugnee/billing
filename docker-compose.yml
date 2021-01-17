@@ -3,6 +3,8 @@ version: "3"
 services:
   db:
     image: postgres
+    networks:
+      - billing
     ports:
       - 5427:5432
     environment:
@@ -10,6 +12,8 @@ services:
 
   dev_server:
     image: billing
+    networks:
+      - billing
     command: bash -c "sh run_migrations.sh && poetry run python billing/manage.py run-server"
     ports:
       - 8081:8081
@@ -26,3 +30,6 @@ services:
       - .:/app
     depends_on:
       - db
+
+networks:
+  billing:

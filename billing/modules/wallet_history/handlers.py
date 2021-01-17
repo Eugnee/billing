@@ -1,8 +1,9 @@
-from billing.modules.db_helpers.get import get_all_by_col_value
-from billing.models import wallet_history_table
+from .crud import get_all_wallet_history_by_wallet_id
 from billing.app import app
 
 
-async def get_all_wallet_history_by_wallet_id(wallet_id: int):
+async def get_last_wallet_history_by_wallet_id(wallet_id: int):
     async with app.db.acquire() as conn:
-        return await get_all_by_col_value(wallet_history_table, conn, "wallet_id", wallet_id)
+        wallet_history = await get_all_wallet_history_by_wallet_id(conn, wallet_id=wallet_id)
+        if wallet_history:
+            return sorted(wallet_history, key=lambda x: x["created_at"], reverse=True)[0]

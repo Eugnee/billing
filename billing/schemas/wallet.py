@@ -1,8 +1,7 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, PositiveInt, validator
 
 
-class WalletFields(BaseModel):
-    user_id: int
+class WalletBase(BaseModel):
     balance: int = 0
 
     @validator("balance")
@@ -12,15 +11,17 @@ class WalletFields(BaseModel):
         return v
 
 
-class Wallet(WalletFields):
+class WalletCreate(WalletBase):
+    user_id: int
+
+
+class WalletUpdate(WalletBase):
+    pass
+
+
+class Wallet(WalletCreate):
     id: int
 
 
 class WalletReplenisment(BaseModel):
-    amount: int
-
-    @validator("amount")
-    def check_balance(cls, v):
-        if v < 0:
-            raise ValueError("Incorrect amount")
-        return v
+    cents: PositiveInt
